@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Navbar from "@/components/Navbar";
 import EcommerceSection from "@/sections/EcommerceSection";
 import VideoSection from "@/sections/VideoSection";
@@ -11,11 +13,201 @@ import { initializeAnimations } from "@/lib/animation";
 function App() {
   const [activeSection, setActiveSection] = useState("ecommerce");
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
 
+  // Map section IDs to their positions
+  const sectionPositions = {
+    "ecommerce": 0,
+    "video": 1,
+    "development": 2
+  };
+
+  // Function to navigate to a specific section
+  const navigateToSection = (sectionId: string) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+
+    // Get position from mapping
+    const position = sectionPositions[sectionId as keyof typeof sectionPositions] || 0;
+    
+    // Create zoom blur transition effect
+    gsap.to("body", {
+      filter: "blur(15px) brightness(1.3) scale(1.1)",
+      duration: 0.5,
+      ease: "power2.inOut",
+      onComplete: () => {
+        // Move to the target section
+        if (mainRef.current) {
+          gsap.to(mainRef.current, {
+            x: -position * window.innerWidth,
+            duration: 0.1,
+            ease: "none",
+            onComplete: () => {
+              setActiveSection(sectionId);
+              // Remove the blur effect with zoom out
+              gsap.to("body", {
+                filter: "blur(0px) brightness(1) scale(1)",
+                duration: 0.5,
+                ease: "power2.out",
+                onComplete: () => {
+                  setIsTransitioning(false);
+                }
+              });
+            }
+          });
+        } else {
+          setIsTransitioning(false);
+        }
+      }
+    });
+  };
+
+  // Initialize application
   useEffect(() => {
-    // Initialize GSAP animations
-    initializeAnimations();
+    // Add loading class to body
+    document.body.classList.add('loading');
+    
+    // Wait for all resources to load
+    window.addEventListener('load', () => {
+      // Initialize GSAP animations
+      setTimeout(() => {
+        initializeAnimations();
+        document.body.classList.remove('loading');
+        document.body.classList.add('loaded');
+        setIsLoaded(true);
+      }, 200);
+    });
+    
+    // If the load event already fired, trigger manually
+    if (document.readyState === 'complete') {
+      initializeAnimations();
+      document.body.classList.remove('loading');
+      document.body.classList.add('loaded');
+      setIsLoaded(true);
+    }
+    
+    // Set body styles
+    document.body.style.overflowX = 'hidden';
+    document.body.style.overflowY = 'hidden'; // Hide vertical scrollbar for horizontal sections
+    
+    return () => {
+      // Cleanup
+      document.body.classList.remove('loading', 'loaded');
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
+  // Set up keyboard navigation and touch events
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    // Set initial position
+    if (mainRef.current) {
+      const initialPosition = sectionPositions[activeSection as keyof typeof sectionPositions] || 0;
+      gsap.set(mainRef.current, { x: -initialPosition * window.innerWidth });
+    }
+
+    // Keyboard navigation
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isTransitioning) return;
+      
+      const currentPosition = sectionPositions[activeSection as keyof typeof sectionPositions];
+      
+      if (e.key === 'ArrowRight' && currentPosition < 2) {
+        // Navigate right
+        const nextSection = Object.keys(sectionPositions).find(
+          key => sectionPositions[key as keyof typeof sectionPositions] === currentPosition + 1
+        );
+        if (nextSection) navigateToSection(nextSection);
+      } else if (e.key === 'ArrowLeft' && currentPosition > 0) {
+        // Navigate left
+        const prevSection = Object.keys(sectionPositions).find(
+          key => sectionPositions[key as keyof typeof sectionPositions] === currentPosition - 1
+        );
+        if (prevSection) navigateToSection(prevSection);
+      }
+    };
+
+    // Touch events for swipe
+    let touchStartX = 0;
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
+    };
+    
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isTransitioning) return;
+      
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) > 100) { // Minimum swipe distance
+        const currentPosition = sectionPositions[activeSection as keyof typeof sectionPositions];
+        
+        if (diff > 0 && currentPosition < 2) {
+          // Swipe left - go right
+          const nextSection = Object.keys(sectionPositions).find(
+            key => sectionPositions[key as keyof typeof sectionPositions] === currentPosition + 1
+          );
+          if (nextSection) navigateToSection(nextSection);
+        } else if (diff < 0 && currentPosition > 0) {
+          // Swipe right - go left
+          const prevSection = Object.keys(sectionPositions).find(
+            key => sectionPositions[key as keyof typeof sectionPositions] === currentPosition - 1
+          );
+          if (prevSection) navigateToSection(prevSection);
+        }
+      }
+    };
+    
+    // Mouse wheel navigation
+    let wheelTimeout: NodeJS.Timeout;
+    const handleWheel = (e: WheelEvent) => {
+      if (isTransitioning) return;
+      
+      // Clear previous timeout
+      clearTimeout(wheelTimeout);
+      
+      // Set a debounce to prevent rapid firing
+      wheelTimeout = setTimeout(() => {
+        const currentPosition = sectionPositions[activeSection as keyof typeof sectionPositions];
+        
+        if (e.deltaX > 50 && currentPosition < 2) {
+          // Scroll right
+          const nextSection = Object.keys(sectionPositions).find(
+            key => sectionPositions[key as keyof typeof sectionPositions] === currentPosition + 1
+          );
+          if (nextSection) navigateToSection(nextSection);
+        } else if (e.deltaX < -50 && currentPosition > 0) {
+          // Scroll left
+          const prevSection = Object.keys(sectionPositions).find(
+            key => sectionPositions[key as keyof typeof sectionPositions] === currentPosition - 1
+          );
+          if (prevSection) navigateToSection(prevSection);
+        }
+      }, 200);
+    };
+
+    // Add event listeners
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener('wheel', handleWheel);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener('wheel', handleWheel);
+      clearTimeout(wheelTimeout);
+    };
+  }, [isLoaded, activeSection, isTransitioning]);
+
+  // Handle resize and device detection
+  useEffect(() => {
     // Check if device is mobile
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -24,47 +216,49 @@ function App() {
     // Initial check
     checkIfMobile();
 
-    // Add resize listener
-    window.addEventListener("resize", checkIfMobile);
-
-    // Track active section on scroll
-    const sections = document.querySelectorAll(".section");
-    
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
+    // Update position on resize
+    const handleResize = () => {
+      checkIfMobile();
       
-      sections.forEach(section => {
-        const sectionElement = section as HTMLElement;
-        const sectionTop = sectionElement.offsetTop;
-        const sectionHeight = sectionElement.offsetHeight;
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-          setActiveSection(sectionElement.id);
-        }
-      });
+      // Update position based on active section
+      if (mainRef.current) {
+        const position = sectionPositions[activeSection as keyof typeof sectionPositions] || 0;
+        gsap.set(mainRef.current, { x: -position * window.innerWidth });
+      }
+      
+      // Refresh ScrollTrigger
+      if (ScrollTrigger) {
+        ScrollTrigger.refresh();
+      }
     };
     
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
     
-    // Clean up
     return () => {
-      window.removeEventListener("resize", checkIfMobile);
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [activeSection]);
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen overflow-hidden gpu-accelerated">
       {!isMobile && <CustomCursor />}
-      <Navbar activeSection={activeSection} />
+      <Navbar 
+        activeSection={activeSection} 
+        onSectionChange={navigateToSection}
+      />
       
-      <main>
+      <main ref={mainRef} className="relative z-10 flex">
         <EcommerceSection />
         <VideoSection />
         <DevelopmentSection />
       </main>
       
-      {!isMobile && <SectionIndicator activeSection={activeSection} />}
+      {!isMobile && 
+        <SectionIndicator 
+          activeSection={activeSection} 
+          onSectionChange={navigateToSection}
+        />
+      }
       <Footer />
     </div>
   );
