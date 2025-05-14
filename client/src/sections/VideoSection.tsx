@@ -232,27 +232,31 @@ const VideoSection = () => {
           <div className="lg:w-1/2">
             <h2 className="text-2xl font-bold text-white mb-6 font-montserrat">Featured Equipment</h2>
             <div ref={equipmentRef} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {videoEquipmentData.slice(0, 4).map((equipment) => (
+              {videoEquipmentData.slice(0, 4).map((equipment, index) => (
                 <div 
-                  key={equipment.id}
+                  key={index}
                   className="bg-card bg-[#1E2542] rounded-xl overflow-hidden shadow-lg group relative"
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1F3A] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative">
                     <img 
                       src={equipment.imageUrl} 
-                      alt={equipment.name} 
+                      alt={equipment.imageUrl.split('/').pop() || 'Video equipment'} 
                       className="w-full h-40 object-cover"
                     />
-                    <div className={`absolute top-3 right-3 ${equipment.badgeColor} text-white text-xs py-1 px-3 rounded-full shadow-md font-semibold`}>
-                      {equipment.badge}
+                    <div className="absolute top-3 right-3 bg-[#FF2E7E] text-white text-xs py-1 px-3 rounded-full shadow-md font-semibold">
+                      Premium
                     </div>
                   </div>
                   <div className="p-4">
-                    <h3 className="text-lg font-montserrat font-semibold mb-2 line-clamp-1">{equipment.name}</h3>
-                    <p className="text-[#E1E5ED] text-sm mb-3 line-clamp-2 h-10">{equipment.description}</p>
+                    <h3 className="text-lg font-montserrat font-semibold mb-2 line-clamp-1">
+                      Professional Camera Kit {index + 1}
+                    </h3>
+                    <p className="text-[#E1E5ED] text-sm mb-3 line-clamp-2 h-10">
+                      High-quality video equipment for professional productions.
+                    </p>
                     <div className="flex justify-between items-center">
-                      <span className="text-[#FF2E7E] font-bold">${equipment.price}/day</span>
+                      <span className="text-[#FF2E7E] font-bold">${99 + index * 50}/day</span>
                       <button className="btn-glow bg-[#FF2E7E] hover:bg-[#FF5C9A] text-white px-3 py-1.5 rounded-full text-sm shadow-glow-secondary transition-all duration-300">
                         Rent Now
                       </button>

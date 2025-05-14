@@ -82,36 +82,60 @@ function App() {
     tl.play();
   };
 
-  // Initialize application
+  // Initialize application with dramatic loading and transition effects
   useEffect(() => {
     // Add loading class to body
     document.body.classList.add('loading');
-    
-    // Wait for all resources to load
-    window.addEventListener('load', () => {
-      // Initialize GSAP animations
-      setTimeout(() => {
-        initializeAnimations();
-        document.body.classList.remove('loading');
-        document.body.classList.add('loaded');
-        setIsLoaded(true);
-      }, 200);
-    });
-    
-    // If the load event already fired, trigger manually
-    if (document.readyState === 'complete') {
-      initializeAnimations();
-      document.body.classList.remove('loading');
-      document.body.classList.add('loaded');
-      setIsLoaded(true);
-    }
     
     // Set body styles
     document.body.style.overflowX = 'hidden';
     document.body.style.overflowY = 'hidden'; // Hide vertical scrollbar for horizontal sections
     
+    // Create a dramatic loading sequence
+    const handleContentLoaded = () => {
+      // Initialize GSAP animations
+      setTimeout(() => {
+        // Create a dramatic reveal animation
+        const tl = gsap.timeline();
+        
+        // First fade out the loading screen
+        tl.to(".loading-screen", {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power3.inOut",
+        })
+        // Then reveal the main content with a zoom effect
+        .fromTo("#root > div", 
+          { scale: 0.92, opacity: 0.5, filter: "blur(15px)" },
+          { 
+            scale: 1, 
+            opacity: 1, 
+            filter: "blur(0px)", 
+            duration: 1.2, 
+            ease: "power3.out" 
+          }
+        )
+        .add(() => {
+          // Mark as loaded and initialize other animations
+          document.body.classList.remove('loading');
+          document.body.classList.add('loaded');
+          setIsLoaded(true);
+          initializeAnimations();
+        });
+      }, 1000); // Longer delay for a more dramatic effect
+    };
+    
+    // Wait for all resources to load
+    window.addEventListener('load', handleContentLoaded);
+    
+    // If the load event already fired, trigger manually
+    if (document.readyState === 'complete') {
+      handleContentLoaded();
+    }
+    
     return () => {
       // Cleanup
+      window.removeEventListener('load', handleContentLoaded);
       document.body.classList.remove('loading', 'loaded');
       document.body.style.overflow = 'auto';
     };

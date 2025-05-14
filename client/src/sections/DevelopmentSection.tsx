@@ -265,8 +265,8 @@ const DevelopmentSection = () => {
                     alt={template.name} 
                     className="w-full h-48 object-cover"
                   />
-                  <div className={`absolute top-3 right-3 ${template.categoryColor} text-white text-xs py-1 px-3 rounded-full shadow-md font-semibold`}>
-                    {template.category}
+                  <div className="absolute top-3 right-3 bg-[#00CCBB] text-white text-xs py-1 px-3 rounded-full shadow-md font-semibold">
+                    {template.id.includes("ecom") ? "E-commerce" : template.id.includes("corp") ? "Business" : "Portfolio"}
                   </div>
                 </div>
                 <div className="p-6">
