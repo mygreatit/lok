@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 20 14.3% 4.1%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 20 14.3% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 14.3% 4.1%;
+  --border: 20 5.9% 90%;
+  --input: 20 5.9% 90%;
+  --primary: 216 100% 50%; /* #0066FF */
+  --primary-foreground: 211 100% 99%;
+  --secondary: 339 100% 59%; /* #FF2E7E */
+  --secondary-foreground: 24 9.8% 10%;
+  --accent: 174 100% 40%; /* #00CCBB */
+  --accent-foreground: 24 9.8% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 60 9.1% 97.8%;
+  --ring: 20 14.3% 4.1%;
+  --radius: 0.5rem;
+
+  /* Custom colors */
+  --primary-light: 216 100% 60%; /* #3385FF */
+  --primary-dark: 216 100% 40%; /* #0052CC */
+  --secondary-light: 339 100% 69%; /* #FF5C9A */
+  --secondary-dark: 339 100% 47%; /* #CC2464 */
+  --accent-light: 174 100% 50%; /* #33D6C8 */
+  --accent-dark: 174 100% 32%; /* #00A394 */
+  --dark: 225 36% 14%; /* #151A30 */
+  --dark-light: 225 36% 19%; /* #1E2542 */
+  --dark-lighter: 225 26% 24%; /* #2A3353 */
+  --light: 210 50% 95%; /* #F5F7FA */
+  --light-dark: 210 30% 90%; /* #E1E5ED */
+  --light-darker: 210 20% 82%; /* #C7CDD9 */
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 216 100% 50%; /* #0066FF */
+  --primary-foreground: 211 100% 99%;
+  --secondary: 339 100% 59%; /* #FF2E7E */
+  --secondary-foreground: 0 0% 98%;
+  --accent: 174 100% 40%; /* #00CCBB */
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+  }
+
+  body {
+    @apply font-inter antialiased bg-gradient-to-b from-[#151A30] to-[#2A3353] text-white overflow-x-hidden;
+  }
+
+  .section {
+    scroll-snap-align: start;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .font-montserrat {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .shadow-glow-primary {
+    box-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+  }
+
+  .shadow-glow-secondary {
+    box-shadow: 0 0 15px rgba(255, 46, 126, 0.5);
+  }
+
+  .shadow-glow-accent {
+    box-shadow: 0 0 15px rgba(0, 204, 187, 0.5);
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #151A30 0%, #2A3353 100%);
+  }
+
+  .btn-glow {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .btn-glow::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+    
+  .btn-glow:hover::before {
+    opacity: 1;
+  }
+
+  .card-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(0, 102, 255, 0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+    
+  .active-section {
+    font-weight: 600;
+    color: #0066FF;
+    position: relative;
+  }
+    
+  .active-section::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #0066FF;
+    box-shadow: 0 0 8px rgba(0, 102, 255, 0.8);
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(0, 102, 255, 0.4); }
+    50% { box-shadow: 0 0 25px rgba(0, 102, 255, 0.7); }
+  }
+}
