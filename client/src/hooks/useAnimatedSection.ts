@@ -2,10 +2,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Make sure GSAP is registered
-if (!gsap.plugins.ScrollTrigger) {
-  gsap.registerPlugin(ScrollTrigger);
-}
+// GSAP plugins are registered in animation.ts
 
 export function useAnimatedSection() {
   // Refs for elements to animate
