@@ -201,7 +201,7 @@ const VideoSection = () => {
     <section 
       id="video" 
       ref={sectionRef}
-      className="section bg-[#151A30] relative flex items-center"
+      className="section bg-[#151A30] relative"
     >
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -213,7 +213,7 @@ const VideoSection = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-6 md:px-12 py-16 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 pt-6 pb-16 relative z-10">
         <div ref={headingRef} className="text-center mb-12">
           <h5 className="text-[#FF2E7E] text-lg md:text-xl mb-4 font-mono inline-block relative">
             Professional Equipment & Services

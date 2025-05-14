@@ -149,7 +149,7 @@ const EcommerceSection = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-6 md:px-12 py-16 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 pt-6 pb-16 relative z-10">
         <div ref={headingRef} className="text-center mb-16">
           <h5 className="text-[#0066FF] text-lg md:text-xl mb-4 font-mono inline-block relative">
             Digital Products Marketplace

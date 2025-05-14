@@ -200,7 +200,7 @@ const DevelopmentSection = () => {
     <section 
       id="development" 
       ref={sectionRef}
-      className="section bg-[#151A30] relative flex items-center"
+      className="section bg-[#151A30] relative"
     >
       {/* Background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -212,7 +212,7 @@ const DevelopmentSection = () => {
         </div>
       </div>
       
-      <div className="container mx-auto px-6 md:px-12 py-16 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 pt-6 pb-16 relative z-10">
         <div ref={headingRef} className="text-center mb-16">
           <h5 className="text-[#00CCBB] text-lg md:text-xl mb-4 font-mono inline-block relative">
             Expert Web Solutions

@@ -126,7 +126,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 80px 0 0 0;
+    padding-top: 80px; /* For navbar space */
     box-sizing: border-box;
     scroll-snap-align: start;
     flex-shrink: 0;
@@ -155,6 +155,23 @@
   .section .container {
     padding-top: 0;
     margin-top: 0;
+  }
+  
+  /* Reduce vertical spacing to bring content up */
+  .section .text-center {
+    margin-bottom: 1rem;
+  }
+  
+  /* Make headings smaller on mobile to bring content up */
+  @media (max-width: 768px) {
+    .section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .section h5 {
+      margin-bottom: 0.5rem;
+    }
   }
   
   /* Style for headings */
