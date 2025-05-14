@@ -24,7 +24,7 @@ function App() {
     "development": 2
   };
 
-  // Function to navigate to a specific section
+  // Enhanced function to navigate to a specific section with dramatic transition
   const navigateToSection = (sectionId: string) => {
     if (isTransitioning) return;
     setIsTransitioning(true);
@@ -32,36 +32,54 @@ function App() {
     // Get position from mapping
     const position = sectionPositions[sectionId as keyof typeof sectionPositions] || 0;
     
-    // Create zoom blur transition effect
-    gsap.to("body", {
-      filter: "blur(15px) brightness(1.3) scale(1.1)",
-      duration: 0.5,
-      ease: "power2.inOut",
-      onComplete: () => {
-        // Move to the target section
-        if (mainRef.current) {
-          gsap.to(mainRef.current, {
-            x: -position * window.innerWidth,
-            duration: 0.1,
-            ease: "none",
-            onComplete: () => {
-              setActiveSection(sectionId);
-              // Remove the blur effect with zoom out
-              gsap.to("body", {
-                filter: "blur(0px) brightness(1) scale(1)",
-                duration: 0.5,
-                ease: "power2.out",
-                onComplete: () => {
-                  setIsTransitioning(false);
-                }
-              });
-            }
-          });
-        } else {
-          setIsTransitioning(false);
-        }
+    // Create dramatic transition timeline
+    const tl = gsap.timeline();
+    
+    // Phase 1: Apply zoom-in and blur effect
+    tl.to("body", {
+      filter: "blur(20px) brightness(1.5)",
+      duration: 0.6,
+      ease: "power2.in",
+    })
+    .to("#root", {
+      scale: 1.2,
+      duration: 0.6,
+      ease: "power2.in",
+      opacity: 0.8,
+    }, "<") // Run at the same time
+    
+    // Phase 2: Move to the target section while still blurred
+    .add(() => {
+      if (mainRef.current) {
+        // Instantly move to the new section while blurred
+        gsap.set(mainRef.current, {
+          x: -position * window.innerWidth
+        });
+        
+        // Update active section
+        setActiveSection(sectionId);
       }
-    });
+    })
+    
+    // Phase 3: Zoom out and remove blur to reveal the new section
+    .to("body", {
+      filter: "blur(0px) brightness(1)",
+      duration: 0.7,
+      ease: "power2.out",
+      delay: 0.2,
+    })
+    .to("#root", {
+      scale: 1,
+      opacity: 1,
+      duration: 0.7,
+      ease: "power2.out",
+      onComplete: () => {
+        setIsTransitioning(false);
+      }
+    }, "<") // Run at the same time
+    
+    // Execute the timeline
+    tl.play();
   };
 
   // Initialize application

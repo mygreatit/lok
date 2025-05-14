@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import GridLines from "@/components/GridLines";
-import { useAnimatedSection } from "@/hooks/useAnimatedSection";
 import { gsap } from "gsap";
 import { videoEquipmentData } from "@/data/mockData";
 
+// Define types for chat messages
 type ChatMessage = {
   id: string;
   text: string;
@@ -11,207 +11,339 @@ type ChatMessage = {
   isVisible: boolean;
 };
 
+// Sample preset responses for the AI demo
+const aiResponses = [
+  "We offer both rental and purchase options for all our professional camera equipment. Would you like more details on rental packages?",
+  "Our top camera for filmmaking is the LaconiX Pro 8K with 120fps capability. It has excellent low-light performance and dynamic range.",
+  "For beginners, I'd recommend starting with the LaconiX EasyShot 4K. It's user-friendly with automatic settings but still produces professional quality.",
+  "Yes, we provide full production services including pre-production planning, filming, editing, and color grading.",
+  "Our team can help you with storyboarding, scripting, and content strategy for your video project.",
+  "All our equipment rentals include insurance options and 24/7 technical support."
+];
+
 const VideoSection = () => {
-  const { fadeUpElements } = useAnimatedSection();
-  const bgElementsRef = useRef<HTMLDivElement>(null);
-  const [inputValue, setInputValue] = useState("");
+  // State for AI chat feature
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    { id: "1", text: "👋 Hi there! I'm your Video Production Assistant. How can I help you today?", isUser: false, isVisible: false },
-    { id: "2", text: "I need a commercial video for my new product launch", isUser: true, isVisible: false },
-    { id: "3", text: "Great! I'd be happy to help with your commercial video. Can you tell me a bit more about your product and when you're planning to launch?", isUser: false, isVisible: false }
-  ]);
-
-  useEffect(() => {
-    if (bgElementsRef.current) {
-      // Animate background elements
-      gsap.from(bgElementsRef.current.children, {
-        opacity: 0,
-        scale: 0.8,
-        duration: 1.5,
-        stagger: 0.2,
-        ease: "power2.out"
-      });
-    }
-
-    // Animate chat messages appearing one by one
-    const messagesTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#video",
-        start: "top center",
-        once: true
-      }
-    });
-
-    chatMessages.forEach((_, index) => {
-      messagesTimeline.add(() => {
-        setChatMessages(prev => 
-          prev.map((msg, i) => 
-            i === index ? { ...msg, isVisible: true } : msg
-          )
-        );
-      }, index * 0.5);
-    });
-  }, []);
-
-  const handleSendMessage = () => {
-    if (inputValue.trim() === "") return;
-    
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(),
-      text: inputValue,
-      isUser: true,
+    {
+      id: "welcome",
+      text: "👋 Hi there! I'm your virtual video production assistant. How can I help you today?",
+      isUser: false,
       isVisible: true
-    };
+    }
+  ]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  
+  // Element references
+  const sectionRef = useRef<HTMLElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const equipmentRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const bgElementsRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Handle chat input
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+  
+  // Function to simulate AI response
+  const simulateAIResponse = (userMessage: string) => {
+    setIsTyping(true);
     
-    setChatMessages([...chatMessages, newMessage]);
-    setInputValue("");
+    // Choose a response based on keywords in the user message
+    let responseIndex = 0;
+    if (userMessage.toLowerCase().includes("rent") || userMessage.toLowerCase().includes("buy")) {
+      responseIndex = 0;
+    } else if (userMessage.toLowerCase().includes("best") || userMessage.toLowerCase().includes("recommend")) {
+      responseIndex = 1;
+    } else if (userMessage.toLowerCase().includes("beginner") || userMessage.toLowerCase().includes("start")) {
+      responseIndex = 2;
+    } else if (userMessage.toLowerCase().includes("service") || userMessage.toLowerCase().includes("offer")) {
+      responseIndex = 3;
+    } else if (userMessage.toLowerCase().includes("planning") || userMessage.toLowerCase().includes("story")) {
+      responseIndex = 4;
+    } else {
+      // Random response for anything else
+      responseIndex = Math.floor(Math.random() * aiResponses.length);
+    }
     
-    // Simulate assistant response after a delay
+    // Add AI response after a realistic delay
     setTimeout(() => {
+      setIsTyping(false);
+      
       const responseMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        text: "Thank you for sharing that information. Our video production team can help create a professional commercial for your product launch. When would you like to schedule a consultation?",
+        id: `ai-${Date.now()}`,
+        text: aiResponses[responseIndex],
         isUser: false,
         isVisible: true
       };
       
       setChatMessages(prev => [...prev, responseMessage]);
-    }, 1000);
+      
+      // Scroll to bottom of chat
+      if (chatContainerRef.current) {
+        setTimeout(() => {
+          if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+          }
+        }, 100);
+      }
+    }, 1200 + Math.random() * 800); // Random delay between 1.2-2 seconds for realistic typing
   };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSendMessage();
+  
+  // Handle send message
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (inputValue.trim() === "") return;
+    
+    // Create new user message
+    const newMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      text: inputValue,
+      isUser: true,
+      isVisible: true
+    };
+    
+    // Add to messages
+    setChatMessages(prev => [...prev, newMessage]);
+    
+    // Clear input
+    setInputValue("");
+    
+    // Simulate AI thinking/typing
+    simulateAIResponse(inputValue);
+    
+    // Focus the input again
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    
+    // Scroll to bottom of chat
+    if (chatContainerRef.current) {
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+      }, 100);
     }
   };
 
+  // Handle key press for chat
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSendMessage(e);
+    }
+  };
+
+  useEffect(() => {
+    // Set up entrance animations when section becomes visible
+    if (!sectionRef.current) return;
+    
+    // Initialize background animations
+    if (bgElementsRef.current) {
+      gsap.from(bgElementsRef.current.children, {
+        opacity: 0,
+        scale: 0.7,
+        duration: 2,
+        stagger: 0.3,
+        ease: "power2.out"
+      });
+    }
+    
+    // Animate heading elements
+    if (headingRef.current) {
+      const elements = headingRef.current.children;
+      gsap.fromTo(
+        elements, 
+        { y: 50, opacity: 0 }, 
+        { 
+          y: 0, 
+          opacity: 1, 
+          duration: 1, 
+          stagger: 0.2, 
+          ease: "power2.out",
+          delay: 0.2
+        }
+      );
+    }
+    
+    // Animate equipment cards
+    if (equipmentRef.current) {
+      const cards = equipmentRef.current.children;
+      gsap.fromTo(
+        cards, 
+        { x: -50, opacity: 0 }, 
+        { 
+          x: 0, 
+          opacity: 1, 
+          duration: 0.7, 
+          stagger: 0.15, 
+          ease: "power2.out",
+          delay: 0.5
+        }
+      );
+    }
+    
+    // Animate chat container
+    if (chatContainerRef.current) {
+      gsap.fromTo(
+        chatContainerRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)", delay: 0.7 }
+      );
+    }
+  }, []);
+
   return (
-    <section id="video" className="section bg-[#151A30] relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#FF2E7E]/5 to-[#151A30]/90"></div>
-      
+    <section 
+      id="video" 
+      ref={sectionRef}
+      className="section bg-[#151A30] relative flex items-center"
+    >
       {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <GridLines />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <GridLines color="#6c0030" />
         <div ref={bgElementsRef} className="absolute inset-0">
-          <div className="absolute top-40 right-40 w-72 h-72 rounded-full bg-[#FF2E7E]/10 blur-3xl"></div>
-          <div className="absolute bottom-40 left-40 w-64 h-64 rounded-full bg-[#0066FF]/10 blur-3xl"></div>
+          <div className="absolute top-[20%] right-[15%] w-[25vw] h-[25vw] rounded-full bg-[#FF2E7E]/10 blur-3xl animate-float-slow"></div>
+          <div className="absolute bottom-[15%] left-[10%] w-[20vw] h-[20vw] rounded-full bg-[#9C2779]/10 blur-3xl animate-float"></div>
+          <div className="absolute top-[60%] right-[30%] w-[15vw] h-[15vw] rounded-full bg-[#5D0054]/10 blur-3xl animate-float-fast"></div>
         </div>
       </div>
       
-      <div className="container mx-auto px-6 py-16 h-full flex flex-col justify-center relative z-10">
-        <div ref={el => fadeUpElements.current.push(el)} className="text-center mb-12" data-delay="0">
-          <h5 className="text-[#FF2E7E] text-lg md:text-xl mb-2 font-mono">Premium Video Services</h5>
-          <h1 className="text-3xl md:text-5xl font-montserrat font-bold mb-4">Cinematic <span className="text-[#FF2E7E]">Video</span> Production</h1>
-          <p className="text-[#E1E5ED] max-w-2xl mx-auto">
-            Transform your vision into stunning visual content with our state-of-the-art production services.
+      <div className="container mx-auto px-6 md:px-12 py-16 relative z-10">
+        <div ref={headingRef} className="text-center mb-12">
+          <h5 className="text-[#FF2E7E] text-lg md:text-xl mb-4 font-mono inline-block relative">
+            Professional Equipment & Services
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#FF2E7E]/30"></span>
+          </h5>
+          <h1 className="text-4xl md:text-6xl font-montserrat font-bold mb-6">
+            Premium <span className="text-[#FF2E7E]">Video</span> Production
+          </h1>
+          <p className="text-[#E1E5ED] max-w-2xl mx-auto text-lg">
+            Professional video production services and equipment rental for creators and businesses.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          {/* Left Column - Service Highlights */}
-          <div className="space-y-6 order-2 lg:order-1">
-            <div ref={el => fadeUpElements.current.push(el)} className="bg-[#1E2542] bg-card p-6 rounded-xl shadow-lg" data-delay="0.1">
-              <div className="flex items-start">
-                <div className="bg-[#2A3353] p-3 rounded-lg mr-4">
-                  <i className="fas fa-film text-[#FF2E7E] text-xl"></i>
+        <div className="flex flex-col lg:flex-row gap-10 items-stretch">
+          {/* Equipment list */}
+          <div className="lg:w-1/2">
+            <h2 className="text-2xl font-bold text-white mb-6 font-montserrat">Featured Equipment</h2>
+            <div ref={equipmentRef} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {videoEquipmentData.slice(0, 4).map((equipment) => (
+                <div 
+                  key={equipment.id}
+                  className="bg-card bg-[#1E2542] rounded-xl overflow-hidden shadow-lg group relative"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1F3A] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <img 
+                      src={equipment.imageUrl} 
+                      alt={equipment.name} 
+                      className="w-full h-40 object-cover"
+                    />
+                    <div className={`absolute top-3 right-3 ${equipment.badgeColor} text-white text-xs py-1 px-3 rounded-full shadow-md font-semibold`}>
+                      {equipment.badge}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-montserrat font-semibold mb-2 line-clamp-1">{equipment.name}</h3>
+                    <p className="text-[#E1E5ED] text-sm mb-3 line-clamp-2 h-10">{equipment.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[#FF2E7E] font-bold">${equipment.price}/day</span>
+                      <button className="btn-glow bg-[#FF2E7E] hover:bg-[#FF5C9A] text-white px-3 py-1.5 rounded-full text-sm shadow-glow-secondary transition-all duration-300">
+                        Rent Now
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-montserrat font-semibold text-lg mb-2">Commercial Production</h3>
-                  <p className="text-[#E1E5ED] text-sm">High-quality promotional videos that capture your brand's essence and message.</p>
-                </div>
-              </div>
+              ))}
             </div>
-            
-            <div ref={el => fadeUpElements.current.push(el)} className="bg-[#1E2542] bg-card p-6 rounded-xl shadow-lg" data-delay="0.2">
-              <div className="flex items-start">
-                <div className="bg-[#2A3353] p-3 rounded-lg mr-4">
-                  <i className="fas fa-photo-video text-[#FF2E7E] text-xl"></i>
-                </div>
-                <div>
-                  <h3 className="font-montserrat font-semibold text-lg mb-2">Content Creation</h3>
-                  <p className="text-[#E1E5ED] text-sm">Regular content production for social media, websites, and marketing campaigns.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div ref={el => fadeUpElements.current.push(el)} className="bg-[#1E2542] bg-card p-6 rounded-xl shadow-lg" data-delay="0.3">
-              <div className="flex items-start">
-                <div className="bg-[#2A3353] p-3 rounded-lg mr-4">
-                  <i className="fas fa-edit text-[#FF2E7E] text-xl"></i>
-                </div>
-                <div>
-                  <h3 className="font-montserrat font-semibold text-lg mb-2">Post-Production</h3>
-                  <p className="text-[#E1E5ED] text-sm">Professional editing, color grading, and visual effects to enhance your footage.</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Video Production Stats */}
-            <div ref={el => fadeUpElements.current.push(el)} className="grid grid-cols-3 gap-4" data-delay="0.4">
-              <div className="bg-[#2A3353] p-4 rounded-lg text-center">
-                <div className="text-[#FF2E7E] text-2xl font-bold">120+</div>
-                <div className="text-[#E1E5ED] text-xs mt-1">Projects</div>
-              </div>
-              <div className="bg-[#2A3353] p-4 rounded-lg text-center">
-                <div className="text-[#FF2E7E] text-2xl font-bold">98%</div>
-                <div className="text-[#E1E5ED] text-xs mt-1">Client Satisfaction</div>
-              </div>
-              <div className="bg-[#2A3353] p-4 rounded-lg text-center">
-                <div className="text-[#FF2E7E] text-2xl font-bold">15+</div>
-                <div className="text-[#E1E5ED] text-xs mt-1">Industry Awards</div>
-              </div>
+            <div className="flex justify-center mt-4">
+              <button className="btn-glow bg-[#2A3353] hover:bg-[#1E2542] text-white px-6 py-3 rounded-full shadow-md transition-all duration-300 flex items-center">
+                <span>View All Equipment</span>
+                <i className="fas fa-arrow-right ml-2"></i>
+              </button>
             </div>
           </div>
           
-          {/* Right Column - Chatbot UI */}
-          <div ref={el => fadeUpElements.current.push(el)} className="bg-[#1E2542] bg-card rounded-xl shadow-lg overflow-hidden order-1 lg:order-2" data-delay="0.1">
-            <div className="bg-[#2A3353] py-3 px-4 border-b border-[#151A30] flex items-center">
-              <div className="w-3 h-3 rounded-full bg-[#FF2E7E] mr-2"></div>
-              <h3 className="font-montserrat text-white">Video Production Assistant</h3>
-            </div>
+          {/* AI Chat Assistant */}
+          <div className="lg:w-1/2">
+            <h2 className="text-2xl font-bold text-white mb-6 font-montserrat flex items-center">
+              <span className="text-[#FF2E7E] mr-2">AI</span> Production Assistant
+              <span className="ml-3 px-2 py-0.5 bg-[#FF2E7E]/20 text-[#FF2E7E] text-xs rounded-full">Live Demo</span>
+            </h2>
             
-            <div className="p-6 h-80 flex flex-col">
-              <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+            <div className="bg-[#1E2542] rounded-xl overflow-hidden shadow-xl border border-[#FF2E7E]/20">
+              {/* Chat header */}
+              <div className="bg-[#161C34] p-4 border-b border-[#FF2E7E]/10 flex items-center">
+                <div className="w-3 h-3 rounded-full bg-[#FF2E7E] mr-2 animate-pulse"></div>
+                <span className="text-white font-medium">LaconiX Assistant</span>
+                <span className="ml-auto text-xs text-[#E1E5ED]/70">Ask me about video production</span>
+              </div>
+              
+              {/* Chat messages */}
+              <div 
+                ref={chatContainerRef}
+                className="p-4 h-[350px] overflow-y-auto flex flex-col space-y-4 bg-[#151A30]/50"
+              >
                 {chatMessages.map((message) => (
-                  <div 
-                    key={message.id} 
-                    className={`flex ${message.isUser ? 'justify-end' : ''} ${message.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} transition-all duration-300`}
+                  <div
+                    key={message.id}
+                    className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} animate-fadeIn`}
                   >
-                    <div className={`${message.isUser ? 'bg-[#FF2E7E]/20' : 'bg-[#2A3353]'} rounded-lg p-3 max-w-[80%]`}>
-                      <p className="text-white">{message.text}</p>
+                    <div 
+                      className={`max-w-[80%] p-3 rounded-lg ${
+                        message.isUser 
+                          ? 'bg-[#FF2E7E] text-white rounded-tr-none' 
+                          : 'bg-[#2A3353] text-[#E1E5ED] rounded-tl-none'
+                      }`}
+                    >
+                      {message.text}
                     </div>
                   </div>
                 ))}
+                
+                {/* Typing indicator */}
+                {isTyping && (
+                  <div className="flex justify-start animate-fadeIn">
+                    <div className="max-w-[80%] p-3 rounded-lg bg-[#2A3353] text-[#E1E5ED] rounded-tl-none">
+                      <div className="flex space-x-2">
+                        <div className="w-2 h-2 rounded-full bg-[#FF2E7E] animate-bounce"></div>
+                        <div className="w-2 h-2 rounded-full bg-[#FF2E7E] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 rounded-full bg-[#FF2E7E] animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               
-              <div className="flex items-center">
-                <input 
-                  type="text" 
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  className="flex-1 bg-[#2A3353] border border-[#2A3353] focus:border-[#FF2E7E] rounded-l-lg py-2 px-4 text-white focus:outline-none" 
-                  placeholder="Type your message..."
-                />
-                <button 
-                  onClick={handleSendMessage}
-                  className="bg-[#FF2E7E] hover:bg-[#FF5C9A] text-white p-2 rounded-r-lg transition-colors duration-300"
-                >
-                  <i className="fas fa-paper-plane"></i>
-                </button>
-              </div>
-            </div>
-            
-            {/* Placeholder for video production equipment showcase */}
-            <div className="grid grid-cols-4 gap-1 p-1 bg-[#151A30]">
-              {videoEquipmentData.map((equipment, index) => (
-                <img 
-                  key={index}
-                  src={equipment.imageUrl} 
-                  alt={equipment.alt} 
-                  className="h-16 object-cover"
-                />
-              ))}
+              {/* Chat input */}
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-[#FF2E7E]/10 bg-[#161C34]">
+                <div className="flex items-center">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Ask about our video services..."
+                    className="flex-1 bg-[#2A3353] text-white placeholder-[#8891B2] border-none rounded-l-lg p-3 focus:outline-none focus:ring-1 focus:ring-[#FF2E7E]"
+                  />
+                  <button 
+                    type="submit"
+                    className="bg-[#FF2E7E] text-white p-3 rounded-r-lg hover:bg-[#FF5C9A] transition-colors"
+                    disabled={inputValue.trim() === "" || isTyping}
+                  >
+                    <i className="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+                <div className="mt-2 text-xs text-[#E1E5ED]/60 text-center">
+                  Try asking about equipment rental, production services, or filmmaking tips
+                </div>
+              </form>
             </div>
           </div>
         </div>
