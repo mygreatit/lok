@@ -47,13 +47,39 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionChange }) => {
     }
   }, [isMenuOpen]);
   
-  // Enhanced smooth navigation to sections
+  // Enhanced smooth navigation to sections with motion blur
   const handleSectionClick = (sectionId: string) => {
     // Close mobile menu if open
     setIsMenuOpen(false);
     
-    // Use the callback for navigation
-    onSectionChange(sectionId);
+    // Add motion blur to navbar during transition
+    if (navRef.current) {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Use the callback for navigation
+          onSectionChange(sectionId);
+        }
+      });
+      
+      // Fade out with blur effect
+      tl.to(navRef.current, {
+        opacity: 0,
+        filter: "blur(8px)",
+        duration: 0.3,
+        ease: "power2.in"
+      })
+      // Fade back in with blur effect after navigation
+      .to(navRef.current, {
+        opacity: 1,
+        filter: "blur(0px)",
+        duration: 0.5,
+        ease: "power2.out",
+        delay: 0.7 // Wait for section transition to complete
+      });
+    } else {
+      // Fallback if ref not available
+      onSectionChange(sectionId);
+    }
   };
   
   // Handle scroll effects

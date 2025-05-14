@@ -58,6 +58,11 @@ function App() {
         
         // Update active section
         setActiveSection(sectionId);
+        
+        // Reset scroll position in all sections
+        document.querySelectorAll('.section').forEach(section => {
+          section.scrollTop = 0;
+        });
       }
     })
     

@@ -125,7 +125,7 @@ const EcommerceSection = () => {
     <section 
       id="ecommerce" 
       ref={sectionRef}
-      className="section bg-[#151A30] relative flex items-center"
+      className="section bg-[#151A30] relative"
     >
       {/* Cart icon with counter */}
       <div className="fixed top-5 right-5 z-50 flex items-center space-x-2">
