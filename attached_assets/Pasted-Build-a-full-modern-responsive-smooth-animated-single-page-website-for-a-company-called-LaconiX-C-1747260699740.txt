@@ -1,0 +1,36 @@
+Build a full modern, responsive, smooth animated single-page website for a company called "LaconiX Corporation" (LX Corp). The website should have a vertical scroll-based layout with 3 distinct full-screen sections, navigable via a sticky top navbar.
+
+🔹 Sections:
+1. Ecommerce (Digital Product Buy & Sell): Design a visually appealing ecommerce section with glowing digital product cards, add-to-cart buttons, and a clean layout. This section will be used as a landing page for social media ads as well.
+2. Video Production: A section that includes a chatbot UI placeholder (for future OpenAI integration). The chatbot will help customers schedule video production orders. Include business highlights and service showcase here.
+3. Development: Provide a clean UI for users to browse & select web templates and submit a form to order development. Display template thumbnails with selection buttons.
+
+🔹 Navbar:
+- Sticky at the top
+- Smooth scroll or motion blur zoom-in-out transition when clicking a tab (no full page reload)
+- Tab Names: Ecommerce, Video Production, Development
+
+🔹 Animation & UI:
+- Use modern JS animation libraries like GSAP or smooth CSS transitions
+- On scroll: gravity-bounce like smooth flow
+- On click: blurry-glow effects on buttons
+- Page transitions: center-focused motion blur zoom
+- All animations must be cleanly separated in reusable modules or components so I can easily edit or replace them later using Cursor AI
+
+🔹 Design Goals:
+- Unique, creative, futuristic look
+- Mobile & desktop responsive
+- Animations must be GPU-optimized and performance-friendly
+- Light/dark theme switcher (optional)
+- All sections should feel like part of a seamless storytelling website
+
+🔹 Code Requirements:
+- Use modular, well-commented code
+- Separate sections/components in files or blocks
+- Add placeholder content and dummy images for now
+- Use plain HTML, CSS, JavaScript (no frameworks), or if required, use lightweight libraries (no React, Vue unless you absolutely must)
+- Make it easy for me to later open in Cursor AI or Replit and edit animation settings, text, images, and button behaviors
+
+Do not build backend or admin panel for now. Focus only on the front-facing user experience with high-end design and animations. I will customize and extend later.
+
+Project Name: LX Corp — Modern Portfolio Website
