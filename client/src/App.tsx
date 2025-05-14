@@ -239,26 +239,46 @@ function App() {
     };
   }, [activeSection]);
 
+  // Loading screen component
+  const LoadingScreen = ({ isLoaded }: { isLoaded: boolean }) => (
+    <div className={`loading-screen ${isLoaded ? 'hidden' : ''}`}>
+      <div className="loading-logo">
+        <span className="logo-text text-[#3385FF]">Laconi</span>
+        <span className="logo-text text-[#FF2E7E]">X</span>
+      </div>
+    </div>
+  );
+  
   return (
     <div className="relative min-h-screen overflow-hidden gpu-accelerated">
+      {/* Loading Screen */}
+      <LoadingScreen isLoaded={isLoaded} />
+      
+      {/* Custom Cursor */}
       {!isMobile && <CustomCursor />}
+      
+      {/* Navigation */}
       <Navbar 
         activeSection={activeSection} 
         onSectionChange={navigateToSection}
       />
       
+      {/* Main Content - Horizontal Layout */}
       <main ref={mainRef} className="relative z-10 flex">
         <EcommerceSection />
         <VideoSection />
         <DevelopmentSection />
       </main>
       
+      {/* Section Indicators */}
       {!isMobile && 
         <SectionIndicator 
           activeSection={activeSection} 
           onSectionChange={navigateToSection}
         />
       }
+      
+      {/* Footer */}
       <Footer />
     </div>
   );

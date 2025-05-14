@@ -18,23 +18,27 @@ export function initializeAnimations() {
   }, 100);
 }
 
-// Handle smooth page transitions when navigating between sections
+// Enhanced page transitions with zoom and motion blur
 export function animatePageTransition(callback: () => void) {
-  // Create a more dramatic transition effect
+  // Create a more dramatic transition effect with zoom
   const tl = gsap.timeline();
   
+  // Apply a zoom-in effect with motion blur
   tl.to("body", {
-    filter: "blur(10px) brightness(1.2)",
-    duration: 0.4, 
+    filter: "blur(15px) brightness(1.3)",
+    transform: "scale(1.1)",
+    duration: 0.5, 
     ease: "power2.out"
   })
   .add(() => {
     callback(); // Execute navigation callback
   })
+  // Zoom out effect as we reveal the new section
   .to("body", {
     filter: "blur(0px) brightness(1)",
-    duration: 0.5,
-    ease: "power2.inOut"
+    transform: "scale(1)",
+    duration: 0.6,
+    ease: "power3.out"
   });
 }
 
@@ -99,72 +103,115 @@ function setupProductCards() {
   });
 }
 
-// Set up section-specific animations
+// Set up section-specific animations for horizontal layout
 function setupSectionAnimations() {
-  // Ecommerce Section
-  const ecommerceTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#ecommerce",
-      start: "top 60%",
-      end: "bottom 20%",
-      toggleActions: "play none none reverse"
+  // Animation helpers - reusable animations
+  const createSectionTimeline = (sectionId: string) => {
+    // Clear any previous animations if they exist
+    ScrollTrigger.getAll()
+      .filter(st => st.vars.trigger && st.vars.trigger.toString().includes(sectionId))
+      .forEach(st => st.kill());
+      
+    return gsap.timeline();
+  };
+  
+  // Generic function to animate section entrance
+  const animateSectionEntrance = (timeline: gsap.core.Timeline, sectionId: string) => {
+    // Common base animations
+    timeline
+      .fromTo(`#${sectionId}`, 
+        { opacity: 0 }, 
+        { opacity: 1, duration: 1, ease: "power2.inOut" }, 0
+      )
+      .fromTo(`#${sectionId} h1`, 
+        { opacity: 0, y: 30, scale: 0.9 }, 
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.7)" }, 0.2
+      )
+      .fromTo(`#${sectionId} h5`, 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.4
+      )
+      .fromTo(`#${sectionId} p`, 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0.5
+      );
+    
+    return timeline;
+  };
+  
+  // Ecommerce Section - Dramatic entrance with scale effects
+  const ecommerceTimeline = createSectionTimeline("ecommerce");
+  animateSectionEntrance(ecommerceTimeline, "ecommerce")
+    .fromTo("#ecommerce .container", 
+      { scale: 0.95, opacity: 0.5 }, 
+      { scale: 1, opacity: 1, duration: 1, ease: "power3.out" }, 0.3
+    )
+    .fromTo("#ecommerce .product-card", 
+      { y: 60, opacity: 0, scale: 0.9 }, 
+      { 
+        y: 0, 
+        opacity: 1, 
+        scale: 1, 
+        stagger: 0.08, 
+        duration: 0.7, 
+        ease: "back.out(1.2)"
+      }, 0.5
+    );
+  
+  // Video Section - Slide in animations for chat elements
+  const videoTimeline = createSectionTimeline("video");
+  animateSectionEntrance(videoTimeline, "video")
+    .fromTo("#video .container", 
+      { x: -30, opacity: 0.5 }, 
+      { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.3
+    )
+    .fromTo("#video .bg-card", 
+      { x: -30, opacity: 0, stagger: 0.1 }, 
+      { x: 0, opacity: 1, stagger: 0.15, duration: 0.8, ease: "power3.out" }, 0.6
+    );
+    
+  // Development Section - Cool template reveal animations
+  const devTimeline = createSectionTimeline("development");
+  animateSectionEntrance(devTimeline, "development")
+    .fromTo("#development .container", 
+      { x: 30, opacity: 0.5 }, 
+      { x: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.3
+    )
+    .fromTo("#development .template-card", 
+      { y: 40, opacity: 0, scale: 0.95, rotation: -2, stagger: 0.1 }, 
+      { 
+        y: 0, 
+        opacity: 1, 
+        scale: 1, 
+        rotation: 0,
+        stagger: 0.1, 
+        duration: 0.8, 
+        ease: "back.out(1.4)"
+      }, 0.5
+    )
+    .fromTo("#development form", 
+      { y: 40, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, 0.9
+    );
+  
+  // Add background parallax effects to all sections
+  gsap.utils.toArray<HTMLElement>(".section").forEach(section => {
+    const bgElements = section.querySelectorAll(".absolute");
+    
+    if (bgElements.length) {
+      gsap.to(bgElements, {
+        y: "20%",
+        duration: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1
+        }
+      });
     }
   });
-  
-  ecommerceTimeline
-    .from("#ecommerce h1", { y: 30, opacity: 0, duration: 0.8, ease: "power2.out" }, 0)
-    .from("#ecommerce h5", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" }, 0.2)
-    .from("#ecommerce p", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" }, 0.3);
-  
-  // Video Section
-  const videoTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#video",
-      start: "top 60%",
-      end: "bottom 20%",
-      toggleActions: "play none none reverse"
-    }
-  });
-  
-  videoTimeline
-    .from("#video h1", { y: 30, opacity: 0, duration: 0.8, ease: "power2.out" }, 0)
-    .from("#video h5", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" }, 0.2)
-    .from("#video p", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" }, 0.3)
-    .from("#video .bg-card", { 
-      opacity: 0, 
-      y: 30, 
-      stagger: 0.15, 
-      duration: 0.8, 
-      ease: "power3.out" 
-    }, 0.4);
-
-  // Development Section
-  const devTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: "#development",
-      start: "top 60%",
-      end: "bottom 20%",
-      toggleActions: "play none none reverse"
-    }
-  });
-  
-  devTimeline
-    .from("#development h1", { y: 30, opacity: 0, duration: 0.8, ease: "power2.out" }, 0)
-    .from("#development h5", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" }, 0.2)
-    .from("#development p", { y: 20, opacity: 0, duration: 0.6, ease: "power2.out" }, 0.3)
-    .from("#development .template-card", { 
-      opacity: 0, 
-      y: 40, 
-      stagger: 0.1, 
-      duration: 0.7, 
-      ease: "back.out(1.2)" 
-    }, 0.4)
-    .from("#development form", { 
-      opacity: 0, 
-      y: 30, 
-      duration: 0.8, 
-      ease: "power2.out" 
-    }, 0.7);
 }
 
 // Set up fade animations for elements with data-fade attributes

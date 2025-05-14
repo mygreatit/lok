@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { animatePageTransition } from "@/lib/animation";
 
 type NavbarProps = {
   activeSection: string;
+  onSectionChange: (sectionId: string) => void;
 };
 
-const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
+const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -52,68 +52,40 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
     // Close mobile menu if open
     setIsMenuOpen(false);
     
-    // Get target section element
-    const targetSection = document.getElementById(sectionId);
-    
-    if (targetSection) {
-      // Apply more dramatic transition animation
-      animatePageTransition(() => {
-        // Enhanced smooth scroll
-        window.scrollTo({
-          top: targetSection.offsetTop,
-          behavior: "smooth"
-        });
-      });
-    }
+    // Use the callback for navigation
+    onSectionChange(sectionId);
   };
   
   // Handle scroll effects
   useEffect(() => {
-    let lastScrollTop = 0;
-    
-    const handleScroll = () => {
-      const st = window.scrollY;
-      
-      // Apply background color change based on scroll position
-      setIsScrolled(st > 50);
-      
-      // Apply show/hide effect based on scroll direction
-      if (navRef.current) {
-        if (st > lastScrollTop && st > 150) {
-          // Scrolling down and past threshold - hide navbar
-          gsap.to(navRef.current, { y: -80, duration: 0.3, ease: "power3.out" });
-        } else {
-          // Scrolling up - show navbar
-          gsap.to(navRef.current, { y: 0, duration: 0.3, ease: "power3.out" });
-        }
+    // Show/hide navbar on hover
+    const handleMouseMove = (e: MouseEvent) => {
+      if (e.clientY < 100 && navRef.current) {
+        gsap.to(navRef.current, { y: 0, duration: 0.3, ease: "power3.out" });
+      } else if (e.clientY > 150 && navRef.current) {
+        gsap.to(navRef.current, { y: -80, duration: 0.3, ease: "power3.out" });
       }
-      
-      lastScrollTop = st <= 0 ? 0 : st; // Prevent negative scrollTop
     };
-    
-    window.addEventListener("scroll", handleScroll, { passive: true });
     
     // Initial setup for the navbar
     if (navRef.current) {
       gsap.set(navRef.current, { y: 0 });
     }
     
+    document.addEventListener("mousemove", handleMouseMove);
+    
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
   
-  // Create nav link animation effects
-  const animateNavLink = (isActive: boolean) => {
-    return {
-      position: "relative",
-      padding: "0.5rem 0",
-      fontWeight: isActive ? 600 : 400,
-      color: isActive ? "#0066FF" : "#FFFFFF",
-      transition: "color 0.3s ease",
-      cursor: "pointer",
-      overflow: "hidden"
-    };
+  // Create active navigation indicators
+  const getNavLinkClass = (sectionId: string) => {
+    return `nav-link relative px-4 py-2 overflow-hidden text-white transition-all duration-300 ${
+      activeSection === sectionId 
+        ? "active-section font-semibold text-[#0066FF]" 
+        : "hover:text-[#0066FF]"
+    }`;
   };
   
   return (
@@ -121,11 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
       ref={navRef} 
       className="fixed top-0 left-0 w-full z-50 transition-all will-change-transform"
     >
-      <div className={`flex justify-between items-center py-4 px-6 md:px-12 backdrop-blur-md transition-all ${
-        isScrolled 
-          ? "bg-[#151A30]/90 shadow-lg" 
-          : "bg-gradient-to-b from-[#151A30]/70 to-transparent"
-      }`}>
+      <div className="flex justify-between items-center py-4 px-6 md:px-12 backdrop-blur-md bg-[#151A30]/80 shadow-lg transition-all">
         <div className="flex items-center">
           <div className="text-2xl font-montserrat font-bold text-white flex items-center">
             <span className="glitch-effect text-[#3385FF]">Laconi</span>
@@ -138,30 +106,21 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection }) => {
           <a 
             href="#ecommerce"
             onClick={(e) => { e.preventDefault(); handleSectionClick("ecommerce"); }}
-            className={`nav-link relative overflow-hidden ${
-              activeSection === "ecommerce" ? "active-section" : ""
-            }`}
-            style={animateNavLink(activeSection === "ecommerce")}
+            className={getNavLinkClass("ecommerce")}
           >
             Ecommerce
           </a>
           <a 
             href="#video"
             onClick={(e) => { e.preventDefault(); handleSectionClick("video"); }}
-            className={`nav-link relative overflow-hidden ${
-              activeSection === "video" ? "active-section" : ""
-            }`}
-            style={animateNavLink(activeSection === "video")}
+            className={getNavLinkClass("video")}
           >
             Video Production
           </a>
           <a 
             href="#development"
             onClick={(e) => { e.preventDefault(); handleSectionClick("development"); }}
-            className={`nav-link relative overflow-hidden ${
-              activeSection === "development" ? "active-section" : ""
-            }`}
-            style={animateNavLink(activeSection === "development")}
+            className={getNavLinkClass("development")}
           >
             Development
           </a>

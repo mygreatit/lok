@@ -398,4 +398,66 @@
     backface-visibility: hidden;
     perspective: 1000px;
   }
+  
+  /* Loading animation styles */
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    background-color: #151A30;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  
+  .loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .loading-logo {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  .loading-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #0066FF, #FF2E7E);
+    animation: loadingBar 2s ease infinite;
+  }
+  
+  .loading-logo .logo-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  @keyframes loadingBar {
+    0% { width: 0; left: 0; }
+    50% { width: 100%; left: 0; }
+    100% { width: 0; left: 100%; }
+  }
+  
+  /* Mobile specific styles */
+  @media (max-width: 767px) {
+    main {
+      width: 300vw;
+    }
+    
+    .section {
+      padding: 60px 20px;
+    }
+    
+    /* Enable touch-based swiping */
+    body.mobile-touch {
+      touch-action: pan-x;
+    }
+  }
 }
