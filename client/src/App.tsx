@@ -35,20 +35,20 @@ function App() {
     // Create dramatic transition timeline
     const tl = gsap.timeline();
     
-    // Phase 1: Apply zoom-in and blur effect
+    // Phase 1: Apply zoom-in and blur effect (faster)
     tl.to("body", {
-      filter: "blur(20px) brightness(1.5)",
-      duration: 0.6,
-      ease: "power2.in",
+      filter: "blur(10px) brightness(1.3)",
+      duration: 0.25,
+      ease: "power1.in", // Easy ease in
     })
     .to("#root", {
-      scale: 1.2,
-      duration: 0.6,
-      ease: "power2.in",
-      opacity: 0.8,
+      scale: 1.1,
+      duration: 0.25,
+      ease: "power1.in", // Easy ease in
+      opacity: 0.9,
     }, "<") // Run at the same time
     
-    // Phase 2: Move to the target section while still blurred
+    // Phase 2: Move to the target section while still blurred (no delay)
     .add(() => {
       if (mainRef.current) {
         // Instantly move to the new section while blurred
@@ -66,18 +66,17 @@ function App() {
       }
     })
     
-    // Phase 3: Zoom out and remove blur to reveal the new section
+    // Phase 3: Zoom out and remove blur to reveal the new section (faster, no delay)
     .to("body", {
       filter: "blur(0px) brightness(1)",
-      duration: 0.7,
-      ease: "power2.out",
-      delay: 0.2,
+      duration: 0.3,
+      ease: "power1.out", // Easy ease out
     })
     .to("#root", {
       scale: 1,
       opacity: 1,
-      duration: 0.7,
-      ease: "power2.out",
+      duration: 0.3,
+      ease: "power1.out", // Easy ease out
       onComplete: () => {
         setIsTransitioning(false);
       }
@@ -100,24 +99,24 @@ function App() {
     const handleContentLoaded = () => {
       // Initialize GSAP animations
       setTimeout(() => {
-        // Create a dramatic reveal animation
+        // Create a faster reveal animation
         const tl = gsap.timeline();
         
-        // First fade out the loading screen
+        // First fade out the loading screen (faster)
         tl.to(".loading-screen", {
           opacity: 0,
-          duration: 0.8,
-          ease: "power3.inOut",
+          duration: 0.4,
+          ease: "power1.in", // Easy ease in
         })
-        // Then reveal the main content with a zoom effect
+        // Then reveal the main content with a zoom effect (faster)
         .fromTo("#root > div", 
-          { scale: 0.92, opacity: 0.5, filter: "blur(15px)" },
+          { scale: 0.95, opacity: 0.8, filter: "blur(10px)" },
           { 
             scale: 1, 
             opacity: 1, 
             filter: "blur(0px)", 
-            duration: 1.2, 
-            ease: "power3.out" 
+            duration: 0.5, 
+            ease: "power1.out" // Easy ease out
           }
         )
         .add(() => {
@@ -127,7 +126,7 @@ function App() {
           setIsLoaded(true);
           initializeAnimations();
         });
-      }, 1000); // Longer delay for a more dramatic effect
+      }, 300); // Much shorter delay for faster loading
     };
     
     // Wait for all resources to load

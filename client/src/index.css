@@ -118,10 +118,10 @@
   
   /* Section styling for horizontal layout with vertical scrolling */
   .section {
-    min-height: 100vh;
+    height: 100vh; /* Fixed height instead of min-height */
     width: 100vw;
     position: relative;
-    overflow-y: auto;
+    overflow-y: scroll; /* Force scroll instead of auto */
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
@@ -131,7 +131,8 @@
     scroll-snap-align: start;
     flex-shrink: 0;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(0, 0, 0, 0.1);
+    scrollbar-color: rgba(255, 255, 255, 0.4) rgba(0, 0, 0, 0.1);
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
   .section::-webkit-scrollbar {
@@ -151,10 +152,13 @@
     background-color: rgba(255, 255, 255, 0.3);
   }
   
-  /* Add top padding to container inside sections */
+  /* Container styles for better content visibility */
   .section .container {
     padding-top: 0;
     margin-top: 0;
+    min-height: auto; /* Allow content to determine height */
+    height: auto;
+    max-height: none; /* Remove any height restrictions */
   }
   
   /* Reduce vertical spacing to bring content up */

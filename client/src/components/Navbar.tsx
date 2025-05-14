@@ -61,20 +61,20 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionChange }) => {
         }
       });
       
-      // Fade out with blur effect
+      // Fade out with blur effect (faster)
       tl.to(navRef.current, {
         opacity: 0,
-        filter: "blur(8px)",
-        duration: 0.3,
-        ease: "power2.in"
+        filter: "blur(5px)",
+        duration: 0.2,
+        ease: "power1.in" // Easy ease in
       })
-      // Fade back in with blur effect after navigation
+      // Fade back in with blur effect after navigation (faster, less delay)
       .to(navRef.current, {
         opacity: 1,
         filter: "blur(0px)",
-        duration: 0.5,
-        ease: "power2.out",
-        delay: 0.7 // Wait for section transition to complete
+        duration: 0.25,
+        ease: "power1.out", // Easy ease out
+        delay: 0.25 // Less delay
       });
     } else {
       // Fallback if ref not available
