@@ -166,6 +166,32 @@
     margin-bottom: 1rem;
   }
   
+  /* Cart box styling */
+  .cart-box {
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+    transform-origin: bottom center;
+    will-change: transform, opacity;
+  }
+  
+  .cart-items {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 102, 255, 0.3) rgba(30, 37, 66, 0.5);
+  }
+  
+  .cart-items::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .cart-items::-webkit-scrollbar-track {
+    background: rgba(30, 37, 66, 0.5);
+    border-radius: 10px;
+  }
+  
+  .cart-items::-webkit-scrollbar-thumb {
+    background: rgba(0, 102, 255, 0.3);
+    border-radius: 10px;
+  }
+  
   /* Make headings smaller on mobile to bring content up */
   @media (max-width: 768px) {
     .section h1 {
