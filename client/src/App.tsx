@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import SectionIndicator from "@/components/SectionIndicator";
 import CustomCursor from "@/components/CustomCursor";
 import { initializeAnimations } from "@/lib/animation";
+import { ChatProvider } from "@/contexts/ChatContext";
 
 function App() {
   const [activeSection, setActiveSection] = useState("ecommerce");
@@ -289,44 +290,41 @@ function App() {
   const LoadingScreen = ({ isLoaded }: { isLoaded: boolean }) => (
     <div className={`loading-screen ${isLoaded ? 'hidden' : ''}`}>
       <div className="loading-logo">
-        <span className="logo-text text-[#3385FF]">Laconi</span>
-        <span className="logo-text text-[#FF2E7E]">X</span>
+        <div className="h-50 w-auto">
+          <img src="/assets/LaconiX.png" alt="LaconiX" className="h-full w-auto object-contain max-w-none" />
+        </div>
       </div>
     </div>
   );
   
   return (
-    <div className="relative min-h-screen overflow-hidden gpu-accelerated">
-      {/* Loading Screen */}
-      <LoadingScreen isLoaded={isLoaded} />
-      
-      {/* Custom Cursor */}
-      {!isMobile && <CustomCursor />}
-      
-      {/* Navigation */}
-      <Navbar 
-        activeSection={activeSection} 
-        onSectionChange={navigateToSection}
-      />
-      
-      {/* Main Content - Horizontal Layout */}
-      <main ref={mainRef} className="relative z-10 flex">
-        <EcommerceSection />
-        <VideoSection />
-        <DevelopmentSection />
-      </main>
-      
-      {/* Section Indicators */}
-      {!isMobile && 
-        <SectionIndicator 
-          activeSection={activeSection} 
-          onSectionChange={navigateToSection}
-        />
-      }
-      
-      {/* Footer */}
-      <Footer />
-    </div>
+    <ChatProvider>
+      <div className="app-container relative">
+        <CustomCursor />
+        <LoadingScreen isLoaded={isLoaded} />
+        
+        <div className={`main-content ${isLoaded ? 'visible' : 'hidden'}`}>
+          <Navbar 
+            activeSection={activeSection} 
+            onSectionChange={navigateToSection} 
+            isMobile={isMobile} 
+          />
+          
+          {/* Main content with horizontal sections */}
+          <main ref={mainRef} className="horizontal-container">
+            <EcommerceSection />
+            <VideoSection />
+            <DevelopmentSection />
+          </main>
+          
+          {/* Global indicator navigation */}
+          <SectionIndicator
+            activeSection={activeSection}
+            onSectionChange={navigateToSection}
+          />
+        </div>
+      </div>
+    </ChatProvider>
   );
 }
 

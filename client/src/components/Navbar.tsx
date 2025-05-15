@@ -4,9 +4,10 @@ import { gsap } from "gsap";
 type NavbarProps = {
   activeSection: string;
   onSectionChange: (sectionId: string) => void;
+  isMobile?: boolean;
 };
 
-const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionChange }) => {
+const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionChange, isMobile }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
@@ -122,9 +123,10 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onSectionChange }) => {
       <div className="flex justify-between items-center py-4 px-6 md:px-12 backdrop-blur-md bg-[#151A30]/80 shadow-lg transition-all">
         <div className="flex items-center">
           <div className="text-2xl font-montserrat font-bold text-white flex items-center">
-            <span className="glitch-effect text-[#3385FF]">Laconi</span>
-            <span className="glitch-effect text-[#FF2E7E]">X</span>
-            <span className="text-xs ml-1 font-mono mt-1 opacity-70 animate-pulse-glow">CORP</span>
+            <div className="glitch-effect relative h-12 w-auto">
+              <img src="/assets/LaconiX.png" alt="LaconiX" className="h-full w-auto object-contain max-w-none" />
+            </div>
+            <span className="text-xs ml-1 font-mono mt-1 opacity-70 animate-pulse-glow">CORPORATION</span>
           </div>
         </div>
         

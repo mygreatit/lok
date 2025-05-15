@@ -1,10 +1,23 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { join } from 'path';
+import { createServer } from 'http';
 
 const app = express();
+const httpServer = createServer(app);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Serve static files from the client/dist directory
+const staticDir = join(process.cwd(), 'client', 'dist');
+app.use(express.static(staticDir));
+
+// Handle all other routes by serving index.html
+app.get('*', (req, res) => {
+  res.sendFile(join(staticDir, 'index.html'));
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -60,7 +73,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  server.listen({
+  httpServer.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,

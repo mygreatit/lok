@@ -66,24 +66,32 @@
 
 @layer base {
   * {
-    @apply border-border;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  html {
-    scroll-behavior: smooth;
-    height: 100%;
+  html, body, #root {
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #151A30 !important;
     overflow-x: hidden;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
   }
 
   body {
-    @apply font-inter bg-gradient-to-b from-[#151A30] to-[#2A3353] text-white overflow-x-hidden;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    will-change: scroll-position;
+    position: fixed !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  #root {
+    position: fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
   }
 
   /* Improved scrollbar styling */
@@ -93,16 +101,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(21, 26, 48, 0.6);
+    background: #1E2542;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgba(0, 102, 255, 0.6);
+    background: #0066FF;
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 102, 255, 0.8);
+    background: #0066FF;
   }
 
   /* Horizontal Section Layout */
@@ -111,54 +119,57 @@
     display: flex;
     flex-direction: row;
     overflow-x: hidden;
-    will-change: transform;
-    perspective: 1000px;
-    transform-style: preserve-3d;
   }
   
-  /* Section styling for horizontal layout with vertical scrolling */
+  /* Section styling for fixed viewport */
   .section {
-    height: 100vh; /* Fixed height instead of min-height */
+    height: 100vh !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
     width: 100vw;
-    position: relative;
-    overflow-y: scroll; /* Force scroll instead of auto */
+    overflow-y: auto;
     overflow-x: hidden;
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    padding-top: 80px; /* For navbar space */
-    box-sizing: border-box;
-    scroll-snap-align: start;
-    flex-shrink: 0;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.4) rgba(0, 0, 0, 0.1);
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    background-color: #151A30;
   }
   
   .section::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
   
   .section::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(21, 26, 48, 0.6);
   }
   
   .section::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
+    background: rgba(0, 102, 255, 0.6);
+    border-radius: 4px;
   }
   
   .section::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 102, 255, 0.8);
   }
   
-  /* Container styles for better content visibility */
-  .section .container {
-    padding-top: 0;
-    margin-top: 0;
-    min-height: auto; /* Allow content to determine height */
+  /* Scroll container with fixed height */
+  .scroll-container {
+    display: flex;
+    flex-direction: column;
     height: auto;
-    max-height: none; /* Remove any height restrictions */
+    width: 100%;
+    padding: 0;
+  }
+  
+  /* Section content fixed within viewport */
+  .section-content {
+    flex: 1;
+    padding: 2rem 1rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
   }
   
   /* Reduce vertical spacing to bring content up */
@@ -207,7 +218,6 @@
   /* Style for headings */
   h1, h2, h3, h4, h5, h6 {
     @apply font-montserrat;
-    will-change: transform, opacity;
   }
   
   /* Style for buttons */
@@ -239,12 +249,7 @@
 
   /* Enhanced shadow effects */
   .shadow-glow-primary {
-    box-shadow: 0 4px 20px -2px rgba(0, 102, 255, 0.5);
-    transition: box-shadow 0.3s ease;
-  }
-
-  .shadow-glow-primary:hover {
-    box-shadow: 0 8px 25px -2px rgba(0, 102, 255, 0.7);
+    @apply shadow-[0_0_15px_rgba(0,102,255,0.5)];
   }
 
   .shadow-glow-secondary {
@@ -328,17 +333,11 @@
 
   /* Card glow effect */
   .card-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, rgba(0, 102, 255, 0.3) 0%, transparent 70%);
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-    pointer-events: none;
-    z-index: 1;
-    border-radius: inherit;
+    @apply absolute inset-0 bg-gradient-to-b from-[#0066FF]/10 to-transparent opacity-0 transition-opacity duration-300;
+  }
+  
+  .product-card:hover .card-glow {
+    @apply opacity-100;
   }
   
   /* Product cards */
@@ -412,22 +411,35 @@
     5.3% { text-shadow: 0 0 0 rgba(0,0,0,0); }
     100% { text-shadow: 0 0 0 rgba(0,0,0,0); }
   }
-}
 
-@layer utilities {
-  /* Enhanced animation utilities */
+  .gpu-accelerated {
+    @apply transform-gpu;
+  }
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
-
+  
   .animate-float-slow {
-    animation: float 10s ease-in-out infinite;
+    animation: float 8s ease-in-out infinite;
   }
-
+  
   .animate-float-fast {
     animation: float 4s ease-in-out infinite;
   }
 
+  /* Smooth scrolling container */
+  .scroll-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    width: 100%;
+    padding: 0 1rem;
+  }
+}
+
+@layer utilities {
+  /* Enhanced animation utilities */
   .animate-pulse-glow {
     animation: pulse-glow 3s infinite;
   }
@@ -446,8 +458,12 @@
 
   /* Animation keyframes */
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
   }
 
   @keyframes pulse-glow {
@@ -463,68 +479,6 @@
   @keyframes scale {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
-  }
-  
-  /* Performance optimizations */
-  .gpu-accelerated {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-  }
-  
-  /* Animation utility classes */
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  .animate-float-slow {
-    animation: float 8s ease-in-out infinite;
-  }
-  
-  .animate-float-fast {
-    animation: float 4s ease-in-out infinite;
-  }
-  
-  .animate-fadeIn {
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  .animate-slideUp {
-    animation: slideUp 0.7s ease forwards;
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  
-  /* Glitch effect for text elements */
-  .glitch-effect {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .glitch-effect:hover {
-    animation: glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-  }
-  
-  @keyframes glitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
   }
   
   /* Loading animation styles */
@@ -588,4 +542,151 @@
       touch-action: pan-x;
     }
   }
+
+  /* Scroll utilities */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  .scroll-auto {
+    scroll-behavior: auto;
+  }
+}
+
+/* Remove the teal section at the bottom */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #151A30 !important;
+  overflow-x: hidden;
+}
+
+body::after {
+  display: none !important;
+  content: none !important;
+}
+
+#root {
+  background-color: #151A30 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Hide any elements that might appear after the footer */
+body > *:not(#root),
+#root ~ * {
+  display: none !important;
+}
+
+/* Section styling */
+.section {
+  min-height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+  background-color: #151A30;
+}
+
+/* Add padding to the bottom of each section to accommodate footer */
+.section-content {
+  padding-bottom: 2rem;
+}
+
+[style*="background-color:#16f2c2"],
+[style*="background-color: #16f2c2"],
+[style*="background:#16f2c2"],
+[style*="background: #16f2c2"] {
+  display: none !important;
+}
+
+/* Last element in the DOM with teal background */
+body > div:last-child[style*="background"],
+#root > div:last-child[style*="background"],
+body > div:last-of-type:not(#root) {
+  display: none !important;
+}
+
+/* Ensure no space below footer */
+footer {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  position: relative;
+  z-index: 100;
+}
+
+html::after, 
+body::after,
+#root::after,
+footer::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Hide any content after the footer */
+footer ~ * {
+  display: none !important;
+}
+
+/* Hard block any elements that might create bottom space */
+body > div:last-child:not(#root),
+body > div[style*="background"],
+body > div[style*="position: fixed; bottom"],
+body > div[style*="margin-top"] {
+  display: none !important;
+}
+
+/* Ensure the root fills the page without extra space */
+#root {
+  display: block;
+  min-height: 100% !important;
+  position: relative !important;
+}
+
+/* Footer with no extra space */
+.section footer {
+  margin: 0 !important;
+  padding-bottom: 0 !important;
+  width: 100% !important;
+}
+
+/* Fix for EcommerceSection scrolling and footer visibility */
+#ecommerce {
+  overflow-y: auto !important;
+  height: 100vh !important;
+  display: block !important;
+  padding-bottom: 0 !important;
+}
+
+#ecommerce .scroll-container {
+  height: auto !important;
+  min-height: calc(100% - 40px) !important;
+  display: block !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+#ecommerce .section-content {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+#ecommerce footer {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+  position: relative !important;
+  bottom: 0 !important;
+}
+
+/* Override any height constraints that might be limiting scrolling */
+.section {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  min-height: 100vh !important;
+  overflow-y: auto !important;
 }

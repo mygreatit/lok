@@ -1,0 +1,67 @@
+{
+  "email": "alternate.test@example.com",
+  "phone": "+8801711223344",
+  "name": "Alternate Test",
+  "company": "Another Company Ltd.",
+  "lastContact": "2025-05-15T22:54:07.769Z",
+  "conversationHistory": [
+    {
+      "id": "welcome",
+      "text": "Assalamu Alaikum, My name is LXAI, I'm your virtual assistant from LaconiX Corporation. Can we start with our pricing details or any other services?",
+      "isUser": false,
+      "isVisible": true
+    },
+    {
+      "id": "user-1651234567890",
+      "text": "Hi, I'm interested in video production services.",
+      "isUser": true,
+      "isVisible": true
+    },
+    {
+      "id": "ai-1651234598765",
+      "text": "Great to hear that! We have excellent video production services for businesses. Could you tell me a bit more about what kind of video you're looking to create?",
+      "isUser": false,
+      "isVisible": true
+    },
+    {
+      "id": "user-1651234667890",
+      "text": "I need a promotional video for my company website.",
+      "isUser": true,
+      "isVisible": true
+    },
+    {
+      "id": "ai-1651234698765",
+      "text": "Perfect! For company promotional videos, we offer comprehensive packages starting at 12,000 BDT. This includes scriptwriting, professional filming, editing, and delivery in multiple formats. We could also integrate some corporate branding elements to make it stand out. Would you like me to share some examples of similar work we've done?",
+      "isUser": false,
+      "isVisible": true
+    },
+    {
+      "id": "user-1651234767890",
+      "text": "Yes, please. And what about the timeline?",
+      "isUser": true,
+      "isVisible": true
+    },
+    {
+      "id": "ai-1651234798765",
+      "text": "We typically complete promotional videos within 7-10 working days from script approval. Here's the general timeline: 2 days for concept and script, 1 day for filming, 3-5 days for editing and revisions, and 1-2 days for final delivery. I've just shared some examples with you via email. Would you like to schedule a free consultation with our video team to discuss your specific requirements?",
+      "isUser": false,
+      "isVisible": true
+    }
+  ],
+  "interests": [
+    "ecommerce",
+    "online store"
+  ],
+  "budget": "20000",
+  "projectTypes": [
+    "online shop",
+    "payment gateway"
+  ],
+  "stage": "prospect",
+  "sectionTypes": [
+    "ecommerce"
+  ],
+  "lastSection": "ecommerce",
+  "notes": "Interested in both video and website development. Priority is company promotional video.",
+  "lastSaved": "2025-05-15T22:54:07.770Z"
+}

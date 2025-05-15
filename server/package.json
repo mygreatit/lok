@@ -1,0 +1,9 @@
+{
+  "name": "laconix-server",
+  "version": "1.0.0",
+  "description": "Server for LaconiX website",
+  "type": "module",
+  "scripts": {
+    "test": "node createTestCustomer.js"
+  }
+} 

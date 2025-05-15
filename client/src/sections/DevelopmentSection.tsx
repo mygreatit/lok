@@ -1,126 +1,49 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import GridLines from "@/components/GridLines";
 import { gsap } from "gsap";
-import { templateData } from "@/data/mockData";
+import Footer from "@/components/Footer";
+import { ChatProvider } from "@/contexts/ChatContext";
+import ChatBot from "@/components/ChatBot";
 
-// Define project feature types
-type ProjectFeature = {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-};
-
-// Project features and capabilities
-const developmentFeatures: ProjectFeature[] = [
+// Development services data
+const developmentServices = [
   {
-    id: "responsive",
-    title: "Responsive Design",
-    description: "Websites that work perfectly on all devices - mobile, tablet, and desktop.",
-    icon: "fas fa-mobile-alt"
+    title: "Website Development",
+    description: "Modern, responsive websites built with the latest technologies.",
+    icon: "fas fa-laptop-code",
+    price: "Starting at 25,000 BDT"
   },
   {
-    id: "performance",
-    title: "Performance Optimization",
-    description: "Lightning-fast load times and smooth user experiences.",
-    icon: "fas fa-bolt"
+    title: "Mobile App Development",
+    description: "Native and cross-platform mobile apps for Android and iOS.",
+    icon: "fas fa-mobile-alt",
+    price: "Starting at 70,000 BDT"
   },
   {
-    id: "security",
-    title: "Advanced Security",
-    description: "Enterprise-grade security measures to protect your data and users.",
-    icon: "fas fa-shield-alt"
+    title: "Web Applications",
+    description: "Custom web applications with advanced features and integrations.",
+    icon: "fas fa-window-restore",
+    price: "Starting at 45,000 BDT"
   },
   {
-    id: "seo",
-    title: "SEO Optimization",
-    description: "Built-in features to help your site rank higher in search results.",
-    icon: "fas fa-search"
+    title: "API Development",
+    description: "Secure and scalable APIs for seamless integration between systems.",
+    icon: "fas fa-code",
+    price: "Starting at 30,000 BDT"
   }
 ];
 
-const DevelopmentSection = () => {
-  // State management
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    project: "",
-    message: ""
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formSuccess, setFormSuccess] = useState(false);
-  
-  // References for animations
+// Main Development Section Content
+const DevelopmentSectionContent = () => {
+  // Element references
   const sectionRef = useRef<HTMLElement>(null);
-  const bgElementsRef = useRef<HTMLDivElement>(null);
-  const templatesRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const servicesRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
-
-  // Handle project template preview
-  const handleTemplatePreview = (templateId: string) => {
-    setSelectedTemplate(prev => prev === templateId ? null : templateId);
-    
-    // Animate selection
-    const card = document.querySelector(`[data-template-id="${templateId}"]`);
-    if (card) {
-      gsap.to(card, {
-        scale: selectedTemplate === templateId ? 1 : 1.05,
-        boxShadow: selectedTemplate === templateId 
-          ? "0 0 0 rgba(0, 204, 187, 0)" 
-          : "0 0 30px rgba(0, 204, 187, 0.3)",
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    }
-  };
-  
-  // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [id]: value
-    }));
-  };
-  
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate form (simple validation for demo)
-    if (!formData.name || !formData.email || !formData.project || !formData.message) {
-      alert("Please fill out all fields");
-      return;
-    }
-    
-    // Simulate form submission
-    setIsSubmitting(true);
-    
-    // Show success message after delay (simulating API call)
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setFormSuccess(true);
-      
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        project: "",
-        message: ""
-      });
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setFormSuccess(false);
-      }, 3000);
-    }, 1500);
-  };
+  const bgElementsRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Set up entrance animations when section becomes visible
+    // Set up entrance animations
     if (!sectionRef.current) return;
     
     // Initialize background animations
@@ -151,235 +74,139 @@ const DevelopmentSection = () => {
       );
     }
     
-    // Animate template cards
-    if (templatesRef.current) {
-      const cards = templatesRef.current.children;
+    // Animate service cards
+    if (servicesRef.current) {
+      const cards = servicesRef.current.children;
       gsap.fromTo(
         cards, 
-        { y: 50, opacity: 0, rotationY: 15 }, 
+        { x: -50, opacity: 0 }, 
         { 
-          y: 0, 
+          x: 0, 
           opacity: 1, 
-          rotationY: 0,
-          duration: 0.8, 
-          stagger: 0.1, 
-          ease: "back.out(1.2)",
-          delay: 0.4
-        }
-      );
-    }
-    
-    // Animate feature cards with a staggered entrance
-    if (featuresRef.current) {
-      const features = featuresRef.current.children;
-      gsap.fromTo(
-        features,
-        { x: -30, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.6,
-          stagger: 0.15,
+          duration: 0.7, 
+          stagger: 0.15, 
           ease: "power2.out",
-          delay: 0.6
+          delay: 0.5
         }
       );
     }
     
-    // Animate form entrance
-    if (formRef.current) {
+    // Animate chat container
+    if (chatContainerRef.current) {
       gsap.fromTo(
-        formRef.current,
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.8 }
+        chatContainerRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.2)", delay: 0.7 }
       );
     }
   }, []);
 
   return (
     <section 
-      id="development" 
+      id="development"
       ref={sectionRef}
-      className="section bg-[#151A30] relative"
+      className="section bg-gradient-to-br from-black to-[#3ee283] relative scroll-smooth w-screen h-screen overflow-y-auto"
     >
-      {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <GridLines color="#004d47" />
-        <div ref={bgElementsRef} className="absolute inset-0">
-          <div className="absolute top-[15%] left-[20%] w-[20vw] h-[20vw] rounded-full bg-[#00CCBB]/10 blur-3xl animate-float-slow"></div>
-          <div className="absolute bottom-[20%] right-[15%] w-[25vw] h-[25vw] rounded-full bg-[#008F81]/10 blur-3xl animate-float"></div>
-          <div className="absolute top-[60%] left-[40%] w-[15vw] h-[15vw] rounded-full bg-[#005F56]/10 blur-3xl animate-float-fast"></div>
+      {/* Background elements - fixed to viewport */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <GridLines />
+        <div ref={bgElementsRef} className="fixed inset-0">
+          <div className="absolute top-[20%] right-[15%] w-[25vw] h-[25vw] rounded-full bg-[#3ee283]/20 blur-3xl animate-float-slow"></div>
+          <div className="absolute bottom-[15%] left-[10%] w-[20vw] h-[20vw] rounded-full bg-[#f5dd42]/10 blur-3xl animate-float"></div>
+          <div className="absolute top-[60%] right-[30%] w-[15vw] h-[15vw] rounded-full bg-green-500/10 blur-3xl animate-float-fast"></div>
         </div>
       </div>
       
-      <div className="container mx-auto px-6 md:px-12 pt-6 pb-16 relative z-10">
-        <div ref={headingRef} className="text-center mb-16">
-          <h5 className="text-[#00CCBB] text-lg md:text-xl mb-4 font-mono inline-block relative">
-            Expert Web Solutions
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#00CCBB]/30"></span>
-          </h5>
-          <h1 className="text-4xl md:text-6xl font-montserrat font-bold mb-6">
-            Custom <span className="text-[#00CCBB]">Development</span> Solutions
-          </h1>
-          <p className="text-[#E1E5ED] max-w-2xl mx-auto text-lg">
-            Transform your digital presence with our cutting-edge development services and premium web templates.
-          </p>
-        </div>
-        
-        {/* Development Features */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-white mb-8 font-montserrat text-center">
-            Our Development Capabilities
-          </h2>
-          <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {developmentFeatures.map((feature) => (
-              <div 
-                key={feature.id}
-                className="bg-[#1E2542] rounded-xl p-6 shadow-lg transform hover:-translate-y-2 transition-transform duration-300"
-              >
-                <div className="w-12 h-12 rounded-full bg-[#00CCBB]/10 flex items-center justify-center mb-4">
-                  <i className={`${feature.icon} text-[#00CCBB] text-xl`}></i>
-                </div>
-                <h3 className="text-lg font-montserrat font-semibold mb-2">{feature.title}</h3>
-                <p className="text-[#E1E5ED] text-sm">{feature.description}</p>
-              </div>
-            ))}
+      {/* Scrollable content with footer */}
+      <div className="scroll-container relative z-10 h-full">
+        <div className="section-content">
+          <div ref={headingRef} className="text-center mb-12">
+            <h5 className="text-green-300 text-lg md:text-xl mb-4 font-mono inline-block relative drop-shadow-[0_0_8px_rgba(62,226,131,0.7)]">
+              Custom Software Solutions
+              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-400/50"></span>
+            </h5>
+            <h1 className="text-4xl md:text-6xl font-montserrat font-bold mb-6 glitch-effect text-[#f5dd42] drop-shadow-[0_0_15px_rgba(245,221,66,0.5)]">
+              <span className="text-white drop-shadow-[0_0_10px_rgba(62,226,131,0.7)]">Development</span> Services
+            </h1>
+            <p className="text-green-200 max-w-2xl mx-auto text-lg drop-shadow-[0_0_8px_rgba(62,226,131,0.5)]">
+              Transform your ideas into reality with our expert development team and cutting-edge technologies.
+            </p>
           </div>
-        </div>
-        
-        {/* Premium Templates */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-white mb-8 font-montserrat text-center">
-            Premium Website Templates
-          </h2>
-          <div ref={templatesRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {templateData.map((template) => (
-              <div 
-                key={template.id}
-                data-template-id={template.id}
-                className="template-card bg-[#1E2542] rounded-xl overflow-hidden shadow-lg gpu-accelerated"
-              >
-                <div className="relative">
-                  <img 
-                    src={template.imageUrl} 
-                    alt={template.name} 
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute top-3 right-3 bg-[#00CCBB] text-white text-xs py-1 px-3 rounded-full shadow-md font-semibold">
-                    {template.id.includes("ecom") ? "E-commerce" : template.id.includes("corp") ? "Business" : "Portfolio"}
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-montserrat font-semibold mb-2">{template.name}</h3>
-                  <p className="text-[#E1E5ED] text-sm mb-4 line-clamp-2 h-10">{template.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#00CCBB] font-bold text-xl">${template.price}</span>
-                    <button 
-                      onClick={() => handleTemplatePreview(template.id)}
-                      className="btn-glow bg-[#00CCBB] hover:bg-[#00E5D2] text-white px-4 py-2 rounded-full shadow-glow-tertiary transition-all duration-300"
-                    >
-                      Preview Demo
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Contact Form */}
-        <div className="bg-[#1E2542] rounded-xl p-8 shadow-xl border border-[#00CCBB]/10">
-          <h2 className="text-2xl md:text-3xl font-montserrat font-bold mb-6 text-center">
-            Request Custom Development
-          </h2>
           
-          {formSuccess ? (
-            <div className="text-center py-8 px-4">
-              <div className="w-16 h-16 rounded-full bg-[#00CCBB]/20 mx-auto flex items-center justify-center mb-4">
-                <i className="fas fa-check text-[#00CCBB] text-2xl"></i>
+          <div className="flex flex-col lg:flex-row gap-10 items-stretch">
+            {/* Services list */}
+            <div className="lg:w-1/2">
+              <h2 className="text-2xl font-bold text-white mb-6 font-montserrat drop-shadow-[0_0_8px_rgba(62,226,131,0.5)]">Our Development Services</h2>
+              <div ref={servicesRef} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {developmentServices.map((service, index) => (
+                  <div 
+                    key={index}
+                    className="product-card bg-black/40 backdrop-blur-sm rounded-xl overflow-hidden shadow-[0_0_15px_rgba(62,226,131,0.3)] hover:shadow-[0_0_20px_rgba(62,226,131,0.5)] border border-[#3ee283]/30 gpu-accelerated group"
+                  >
+                    <div className="card-glow bg-gradient-to-b from-[#3ee283]/20 to-transparent"></div>
+                    <div className="p-6">
+                      <div className="text-4xl mb-4 text-[#3ee283] drop-shadow-[0_0_5px_rgba(62,226,131,0.7)]">
+                        <i className={service.icon}></i>
+                      </div>
+                      <h3 className="text-lg font-montserrat font-semibold mb-2 line-clamp-1 text-white drop-shadow-[0_0_5px_rgba(62,226,131,0.5)]">
+                        {service.title}
+                      </h3>
+                      <p className="text-green-200 text-sm mb-3 line-clamp-2 h-10 drop-shadow-[0_0_3px_rgba(62,226,131,0.3)]">
+                        {service.description}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[#f5dd42] font-bold drop-shadow-[0_0_8px_rgba(245,221,66,0.5)]">{service.price}</span>
+                        <button className="btn-glow bg-[#3ee283] hover:bg-[#2dd072] text-black font-medium px-3 py-1.5 rounded-full shadow-[0_0_10px_rgba(62,226,131,0.5)] hover:shadow-[0_0_15px_rgba(62,226,131,0.7)] transition-all duration-300 active:filter active:blur-[1px] active:brightness-150">
+                          Learn More
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Request Submitted!</h3>
-              <p className="text-[#E1E5ED]">
-                Thanks for reaching out. Our development team will contact you shortly.
-              </p>
-            </div>
-          ) : (
-            <form ref={formRef} onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label htmlFor="name" className="text-[#E1E5ED] text-sm font-medium">Name</label>
-                <input 
-                  type="text" 
-                  id="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full bg-[#2A3353] border border-[#3A466B] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00CCBB] transition-colors" 
-                  placeholder="Your name"
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-[#E1E5ED] text-sm font-medium">Email</label>
-                <input 
-                  type="email" 
-                  id="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full bg-[#2A3353] border border-[#3A466B] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00CCBB] transition-colors" 
-                  placeholder="Your email"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label htmlFor="project" className="text-[#E1E5ED] text-sm font-medium">Project Type</label>
-                <select 
-                  id="project"
-                  value={formData.project}
-                  onChange={handleInputChange}
-                  className="w-full bg-[#2A3353] border border-[#3A466B] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00CCBB] transition-colors"
-                >
-                  <option value="">Select project type</option>
-                  <option value="website">Website</option>
-                  <option value="app">Mobile App</option>
-                  <option value="ecommerce">E-commerce</option>
-                  <option value="custom">Custom Solution</option>
-                </select>
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label htmlFor="message" className="text-[#E1E5ED] text-sm font-medium">Project Details</label>
-                <textarea 
-                  id="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full bg-[#2A3353] border border-[#3A466B] rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#00CCBB] transition-colors resize-none" 
-                  placeholder="Describe your project requirements..."
-                ></textarea>
-              </div>
-              <div className="md:col-span-2 flex justify-center">
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-glow bg-[#00CCBB] hover:bg-[#00E5D2] text-white px-8 py-4 rounded-full shadow-lg transition-all duration-300 flex items-center"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      Submit Request
-                      <i className="fas fa-arrow-right ml-3"></i>
-                    </>
-                  )}
+              <div className="flex justify-center mt-4">
+                <button className="btn-glow bg-black/50 backdrop-blur-sm hover:bg-black/70 text-[#f5dd42] border border-[#3ee283]/50 px-6 py-3 rounded-full shadow-[0_0_15px_rgba(62,226,131,0.3)] hover:shadow-[0_0_20px_rgba(62,226,131,0.5)] transition-all duration-300 flex items-center active:filter active:blur-[1px] active:brightness-150">
+                  <span className="drop-shadow-[0_0_8px_rgba(245,221,66,0.5)]">View All Services</span>
+                  <i className="fas fa-arrow-right ml-3 text-green-300 drop-shadow-[0_0_5px_rgba(62,226,131,0.7)]"></i>
                 </button>
               </div>
-            </form>
-          )}
+            </div>
+            
+            {/* AI Chat Assistant */}
+            <div className="lg:w-1/2">
+              <h2 className="text-2xl font-bold text-white mb-6 font-montserrat flex items-center drop-shadow-[0_0_8px_rgba(62,226,131,0.5)]">
+                <span className="text-[#f5dd42] mr-2 drop-shadow-[0_0_8px_rgba(245,221,66,0.5)]">AI</span> Development Advisor
+                <span className="ml-3 px-2 py-0.5 bg-[#3ee283]/20 text-[#3ee283] text-xs rounded-full drop-shadow-[0_0_5px_rgba(62,226,131,0.5)]">Powered by Groq</span>
+              </h2>
+              
+              <div ref={chatContainerRef}>
+                <ChatBot sectionType="development" />
+              </div>
+            </div>
+          </div>
+          
+          {/* Contact button */}
+          <div className="flex justify-center mt-12 pb-16">
+            <button className="btn-glow bg-black/50 backdrop-blur-sm hover:bg-black/70 text-[#f5dd42] border border-[#3ee283]/50 px-8 py-4 rounded-full shadow-[0_0_15px_rgba(62,226,131,0.3)] hover:shadow-[0_0_20px_rgba(62,226,131,0.5)] transition-all duration-300 flex items-center text-lg active:filter active:blur-[1px] active:brightness-150">
+              <span className="drop-shadow-[0_0_8px_rgba(245,221,66,0.5)]">Contact Development Team</span>
+              <i className="fas fa-arrow-right ml-3 text-green-300 drop-shadow-[0_0_5px_rgba(62,226,131,0.7)]"></i>
+            </button>
+          </div>
         </div>
+        
+        {/* Include Footer at the bottom of scrollable content */}
+        <Footer />
       </div>
     </section>
+  );
+};
+
+// Wrapper with ChatProvider
+const DevelopmentSection = () => {
+  return (
+    <ChatProvider>
+      <DevelopmentSectionContent />
+    </ChatProvider>
   );
 };
 

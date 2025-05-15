@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/assets/LaconiX.png" />
+  <title>LaconiX Corporation</title>
+  <meta name="description" content="LaconiX Corporation - Digital Solutions, Video Production and Development Services" />
+  <style>
+    html, body, #root {
+      margin: 0;
+      padding: 0;
+      background-color: #151A30;
+    }
+    
+    /* Prevent any elements from showing at the bottom */
+    body::after, body::before, html::after, html::before {
+      display: none !important;
+      content: none !important;
+    }
+
+    /* Hide any elements outside root */
+    body > *:not(#root),
+    #root ~ * {
+      display: none !important;
+    }
+    
+    /* Specifically hide any elements with teal background */
+    [style*="background-color:#16f2c2"],
+    [style*="background-color: #16f2c2"],
+    [style*="background:#16f2c2"],
+    [style*="background: #16f2c2"] {
+      display: none !important;
+    }
+    
+    /* Ensure nothing is below the footer */
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    #root {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+  
+  <!-- Script to remove any unwanted elements -->
+  <script>
+    // Remove any unwanted elements
+    function removeUnwantedElements() {
+      // Get the footer
+      const footer = document.querySelector('footer');
+      
+      if (footer) {
+        // Find and remove any elements that might be after the footer
+        let nextElement = footer.nextElementSibling;
+        while (nextElement) {
+          const toRemove = nextElement;
+          nextElement = nextElement.nextElementSibling;
+          toRemove.remove();
+        }
+      }
+      
+      // Remove any direct children of body that aren't the root
+      document.body.childNodes.forEach(node => {
+        if (node.nodeType === 1 && node.id !== 'root' && node.tagName !== 'SCRIPT') {
+          node.style.display = 'none';
+        }
+      });
+      
+      // Remove any elements with teal background
+      document.querySelectorAll('*').forEach(el => {
+        const style = window.getComputedStyle(el);
+        if (style.backgroundColor === 'rgb(22, 242, 194)' || 
+            style.backgroundColor === '#16f2c2') {
+          el.style.display = 'none';
+        }
+      });
+    }
+    
+    // Run on load and periodically to ensure clean page
+    window.addEventListener('load', removeUnwantedElements);
+    setInterval(removeUnwantedElements, 1000);
+  </script>
+</body>
+</html> 

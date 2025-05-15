@@ -83,41 +83,53 @@ export const templateData = [
     name: "E-commerce Pro",
     description: "Full-featured online store template with cart and payment integration.",
     price: "1,299",
-    imageUrl: "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500"
+    imageUrl: "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    type: "E-commerce",
+    badge: "Premium"
   },
   {
     id: "template2",
     name: "Portfolio Elite",
     description: "Showcase your work with this elegant, responsive portfolio template.",
     price: "899",
-    imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500"
+    imageUrl: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    type: "Portfolio",
+    badge: "Popular"
   },
   {
     id: "template3",
     name: "Corporate Suite",
     description: "Professional business website with service listings and team profiles.",
     price: "1,199",
-    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500"
+    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    type: "Business",
+    badge: "Premium"
   },
   {
     id: "template4",
     name: "Blog Premium",
     description: "Modern blog platform with advanced content management features.",
     price: "799",
-    imageUrl: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500"
+    imageUrl: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    type: "Blog",
+    badge: "New"
   },
   {
     id: "template5",
     name: "Education Platform",
     description: "Complete solution for online courses and educational content delivery.",
     price: "1,499",
-    imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500"
+    imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    type: "Education",
+    badge: "Featured"
   },
   {
     id: "template6",
     name: "Restaurant Showcase",
     description: "Elegant template for restaurants with menu and reservation features.",
     price: "999",
-    imageUrl: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500"
+    imageUrl: "https://images.unsplash.com/photo-1559329007-40df8a9345d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    type: "Restaurant",
+    badge: "Hot"
   }
 ];
